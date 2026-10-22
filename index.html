@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>🔮 Tarot en Vivo</title>
+<style>
+:root{--g:#d4af37;--gl:#f7e98e;--bg:#0d0518;--p:#1a0a2e;--ps:#6b4f9e;--t:#f0e6ff;--ts:#b8a5d4;--r:#ff8080;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit;margin:0;padding:0}
+body{font-family:Georgia,serif;background:radial-gradient(ellipse at top,var(--p),var(--bg) 60%,#000) fixed;color:var(--t);min-height:100vh;padding:16px;overflow-x:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;background:#fff;border-radius:50%;animation:tw 3s infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto}
+header{text-align:center;margin-bottom:20px}
+h1{font-size:clamp(1.7em,6vw,3em);letter-spacing:3px;background:linear-gradient(135deg,var(--g),var(--gl),var(--g));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--ts);font-style:italic;margin-top:6px}
+.panel{background:linear-gradient(145deg,rgba(45,27,78,.85),rgba(26,15,46,.85));border:1px solid var(--g);border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 0 40px rgba(212,175,55,.15)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:16px}
+label{display:block;color:var(--g);font-size:.75em;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+input,select{width:100%;padding:12px;background:rgba(0,0,0,.45);border:1px solid var(--ps);border-radius:9px;color:var(--t);font:inherit;font-size:16px}
+input:focus,select:focus{outline:none;border-color:var(--g);box-shadow:0 0 14px rgba(212,175,55,.4)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+button{padding:13px 20px;font:inherit;font-weight:700;font-size:.9em;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--ps);border-radius:9px;cursor:pointer;background:rgba(107,79,158,.35);color:var(--t);transition:.2s}
+button:hover{background:rgba(107,79,158,.65)}
+button.gold{background:linear-gradient(135deg,var(--g),var(--gl));color:var(--bg);border:none;flex:1;min-width:170px;box-shadow:0 0 20px rgba(212,175,55,.4)}
+button.gold:hover{transform:translateY(-2px)}
+#err{color:var(--r);min-height:1.2em;margin-bottom:8px;font-size:.9em}
+.tools{display:none;margin-bottom:10px;justify-content:center}
+.tools.on{display:flex}
+.who{display:none;background:rgba(212,175,55,.08);border:1px solid var(--g);border-radius:14px;padding:16px 18px;margin-bottom:14px;line-height:1.6;animation:fi .6s}
+.who.on{display:block}
+.who strong{color:var(--gl)}
+.cards{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:18px 0}
+.hint{text-align:center;color:var(--ps);font-style:italic;padding:30px 10px}
+.card{width:clamp(105px,28vw,190px);cursor:pointer;animation:deal .6s both}
+@keyframes deal{from{opacity:0;transform:translateY(-40px) scale(.8)}to{opacity:1;transform:none}}
+.inner{position:relative;aspect-ratio:2/3;transform-style:preserve-3d;transition:transform .8s}
+.card.flip .inner{transform:rotateY(180deg)}
+.card:not(.flip):hover .inner{transform:translateY(-6px)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:2px solid var(--g);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:8% 6%;text-align:center;box-shadow:0 0 22px rgba(212,175,55,.25)}
+.back{background:repeating-conic-gradient(#2d1b4e 0 25%,#1a0f2e 0 50%) 0 0/22px 22px;justify-content:center;font-size:2.4em;color:var(--g)}
+.front{transform:rotateY(180deg);background:linear-gradient(155deg,#2d1b4e,#1a0f2e)}
+.front b{color:var(--ts)}
+.front i{font-style:normal;font-size:clamp(2.2em,9vw,4em)}
+.front i.rv{display:inline-block;transform:rotate(180deg)}
+.front em{font-style:normal;color:var(--g);font-weight:700;font-size:clamp(.72em,2.6vw,1em)}
+.front small{font-size:.65em;color:var(--gl)}
+.front small.rv{color:var(--r)}
+.pos{text-align:center;color:var(--ts);font-size:.7em;letter-spacing:1.5px;text-transform:uppercase;margin-top:8px}
+.read{background:rgba(30,15,50,.72);border:1px solid var(--ps);border-radius:16px;padding:22px;display:none;animation:fi .6s}
+.read.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.read h2{color:var(--g);text-align:center;letter-spacing:2px;font-size:1.25em;margin-bottom:16px}
+.it{border-left:3px solid var(--g);background:rgba(0,0,0,.25);border-radius:6px;padding:12px 14px;margin-bottom:10px;line-height:1.7}
+.it b{color:var(--gl)}
+.it span{color:var(--ts);font-size:.8em;text-transform:uppercase;letter-spacing:1px}
+.syn{border:2px solid var(--g);border-radius:12px;padding:18px;background:rgba(212,175,55,.08);line-height:1.75}
+.syn p+p{margin-top:10px}
+.syn button{width:100%;margin-top:6px}
+.ai{white-space:pre-wrap;line-height:1.85;margin-top:14px;padding-top:14px;border-top:1px dashed rgba(212,175,55,.35);color:#f3eaff}
+.ai:empty{display:none}
+body.live .ai{font-size:1.15em}
+body.live .panel,body.live .sub{display:none}
+body.live .card{width:clamp(120px,30vw,230px)}
+body.live .it,body.live .syn{font-size:1.2em}
+@media(max-width:600px){body{padding:12px}.panel,.read{padding:16px}button{flex:1}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="wrap">
+  <header>
+    <h1>🔮 TAROT EN VIVO 🔮</h1>
+    <p class="sub">Lectura personalizada con tu arcano de nacimiento</p>
+  </header>
+
+  <div class="panel">
+    <div class="grid">
+      <div><label for="nm">👤 Nombre</label><input id="nm" type="text" placeholder="Ej: María" autocomplete="off"></div>
+      <div><label for="bd">🎂 Fecha de nacimiento</label><input id="bd" type="date"></div>
+      <div><label for="tp">❓ Consulta</label>
+        <select id="tp">
+          <option value="amor">💕 Amor y relaciones</option>
+          <option value="trabajo">💼 Trabajo</option>
+          <option value="dinero">💰 Dinero</option>
+          <option value="salud">🌿 Salud y bienestar</option>
+          <option value="familia">👨‍👩‍👧 Familia</option>
+          <option value="destino">🌟 Destino</option>
+          <option value="decision">🤔 Una decisión</option>
+          <option value="general" selected>🔮 General</option>
+        </select></div>
+      <div><label for="sp">🃏 Tirada</label>
+        <select id="sp">
+          <option value="1">1 carta · Mensaje rápido</option>
+          <option value="3">3 cartas · Pasado, presente, futuro</option>
+          <option value="5" selected>5 cartas · Lectura completa</option>
+        </select></div>
+    </div>
+    <div id="err"></div>
+    <div class="row">
+      <button class="gold" id="go">✨ Barajar y repartir ✨</button>
+      <button id="rs">🔄 Nueva consulta</button>
+    </div>
+  </div>
+
+  <div class="who" id="who"></div>
+
+  <div class="tools row" id="tools">
+    <button id="nx">👁️ Revelar siguiente</button>
+    <button id="all">✨ Revelar todas</button>
+    <button id="lv">📺 Modo live</button>
+  </div>
+
+  <div class="cards" id="cards"><div class="hint">Las cartas esperan tu consulta… ✨</div></div>
+
+  <div class="read" id="read"><h2>📖 Interpretación</h2><div id="rc"></div></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// ---------- DATOS ----------
+const MAJ=`El Loco|🃏|Nuevos comienzos, un salto de fe|Imprudencia, miedo a avanzar
+El Mago|🎩|Tienes todos los recursos para lograrlo|Manipulación, talento desperdiciado
+La Sacerdotisa|🌙|Intuición, secretos, voz interior|Confusión, algo no te están diciendo
+La Emperatriz|👑|Abundancia, creatividad, florecimiento|Bloqueo creativo, descuido personal
+El Emperador|🏛️|Autoridad, estructura, estabilidad|Rigidez, control excesivo
+El Sumo Sacerdote|📿|Tradición, guía sabia, enseñanza|Rebeldía, cuestionarlo todo
+Los Enamorados|💕|Amor, unión, elección del corazón|Desarmonía, mala elección afectiva
+El Carro|🏇|Victoria, determinación, avance|Pérdida de rumbo, obstáculos
+La Fuerza|🦁|Coraje, compasión, dominio de ti mismo|Inseguridad, dudas
+El Ermitaño|🕯️|Introspección, sabiduría, tiempo a solas|Aislamiento, rechazo al consejo
+La Rueda de la Fortuna|🎡|Cambio de suerte, ciclos a tu favor|Mala racha temporal, resistencia al cambio
+La Justicia|⚖️|Equilibrio, verdad, karma|Injusticia, deshonestidad
+El Colgado|🙃|Pausa, nueva perspectiva, soltar|Estancamiento, sacrificio inútil
+La Muerte|💀|Transformación, un final que libera|Miedo al cambio, aferrarse
+La Templanza|🏺|Equilibrio, paciencia, sanación|Excesos, impaciencia
+El Diablo|😈|Ataduras, tentación, sombra|Liberación, rompes cadenas
+La Torre|🗼|Cambio súbito, lo falso se derrumba|Crisis evitada, el cambio viene igual
+La Estrella|⭐|Esperanza, sanación, inspiración|Desilusión, falta de fe
+La Luna|🌕|Ilusión, miedo, no todo es lo que parece|La niebla se disipa, verdad revelada
+El Sol|☀️|Éxito, alegría, claridad|Tristeza pasajera, ego
+El Juicio|📯|Renacer, perdón, llamado interior|Culpa, autocrítica, indecisión
+El Mundo|🌍|Plenitud, un ciclo que cierra con éxito|Falta de cierre, casi lo logras`.split("\n").map(l=>l.split("|"));
+
+const RANKS=["As","Dos","Tres","Cuatro","Cinco","Seis","Siete","Ocho","Nueve","Diez","Sota","Caballero","Reina","Rey"];
+const SUITS=[
+{k:"Copas",e:"🏆",t:"las emociones y el amor",m:`Nuevo amor, emociones puras|Corazón cerrado, amor no correspondido
+Unión, atracción, pareja|Desencuentro, conflicto en pareja
+Amistad, celebración, alegría compartida|Chismes, exceso social
+Apatía, oportunidad ignorada|Despertar, nuevas oportunidades
+Pérdida, duelo, arrepentimiento|Aceptación, comienza la sanación
+Nostalgia, reencuentro, inocencia|Apego al pasado, suéltalo
+Ilusiones, muchas opciones, confusión|Claridad, decisión firme
+Dejar atrás lo que ya no te llena|Miedo a irte, estancamiento
+Deseo cumplido, satisfacción|Insatisfacción, excesos
+Armonía familiar, plenitud|Conflicto familiar, ruptura
+Mensaje del corazón, sensibilidad|Inmadurez emocional, celos
+Propuesta romántica, alguien llega con amor|Promesas vacías, inestabilidad
+Compasión, intuición, apoyo sensible|Emociones desbordadas, dependencia
+Calma, sabiduría emocional, buen consejero|Frialdad, manipulación emocional`},
+{k:"Oros",e:"🪙",t:"lo material y financiero",m:`Oportunidad material, nuevo dinero|Oportunidad perdida, descuido financiero
+Equilibrio, flexibilidad entre dos opciones|Desorden, sobrecarga
+Trabajo en equipo, reconocimiento|Mediocridad, falta de colaboración
+Ahorro, seguridad, control|Gastos, tacañería o soltar
+Escasez, pérdida, pide ayuda|Recuperación, llega ayuda
+Generosidad, recibes ayuda|Deudas, favores con precio
+Paciencia, lo sembrado dará fruto|Impaciencia, inversión dudosa
+Dedicación, esfuerzo constante|Desmotivación, monotonía
+Independencia, éxito merecido|Dependencia económica, superficialidad
+Riqueza duradera, estabilidad familiar|Pérdida financiera, conflictos de herencia
+Estudio, nueva habilidad, oportunidad|Pereza, falta de enfoque
+Constancia, progreso lento pero seguro|Estancamiento, terquedad
+Abundancia, practicidad, cuidado|Materialismo, descuido del hogar
+Éxito empresarial, estabilidad|Avaricia, ambición descontrolada`},
+{k:"Espadas",e:"⚔️",t:"la mente y los conflictos",m:`Claridad, verdad, una idea poderosa|Confusión, mala comunicación
+Indecisión, bloqueo, tregua|Decisión tomada, claridad
+Dolor, traición, corazón roto|Sanación, perdón
+Descanso, recuperación|Agotamiento, volver a la acción
+Conflicto, tensión: ¿vale la pena pelear?|Reconciliación, soltar el rencor
+Transición, dejas lo difícil atrás|Resistencia al cambio
+Estrategia, engaño, falta de transparencia|Verdad revelada, lo oculto sale a la luz
+Ataduras mentales, sensación de no tener salida|Liberación, rompes las cadenas
+Angustia, ansiedad, miedos en la mente|Superación de miedos, esperanza
+Final doloroso, pero llega el amanecer|Recuperación, lo peor ya pasó
+Curiosidad, alerta, nuevas ideas|Chismes, palabras hirientes
+Acción rápida, valentía, cambios súbitos|Impulsividad, agresividad
+Claridad mental, franqueza, independencia|Frialdad, amargura
+Autoridad, justicia, mente clara|Abuso de poder, manipulación`},
+{k:"Bastos",e:"🔥",t:"la acción y la pasión",m:`Inspiración, nuevo proyecto con pasión|Bloqueo creativo, proyecto frenado
+Planificación, decisiones a futuro|Miedo al cambio, falta de plan
+Expansión, oportunidades lejanas|Retrasos, falta de visión
+Celebración, hogar, estabilidad|Inestabilidad, fiesta pospuesta
+Competencia, rivalidad, lucha|Tregua, evitar el conflicto
+Victoria, reconocimiento público|Falta de reconocimiento, arrogancia
+Defiende tu posición con firmeza|Desánimo, ganas de rendirte
+Velocidad, noticias, avance rápido|Retrasos, frustración
+Resistencia, estás cerca de la meta|Agotamiento, desconfianza
+Demasiada carga y responsabilidad|Soltar cargas, delegar
+Entusiasmo, noticias emocionantes|Falta de dirección, retrasos
+Aventura, pasión, energía|Impulsividad, promesas rotas
+Carisma, confianza, magnetismo|Inseguridad, celos
+Liderazgo, visión, éxito|Arrogancia, decisiones apresuradas`}];
+
+const DECK=[];
+MAJ.forEach(([n,e,u,r],i)=>DECK.push({n,e,u,r,s:"Mayor",sym:i}));
+SUITS.forEach(S=>S.m.split("\n").forEach((l,i)=>{
+  const [u,r]=l.split("|");
+  DECK.push({n:RANKS[i]+" de "+S.k,e:S.e,u,r,s:S.k,sym:i<10?i+1:["P","C","Q","K"][i-10]});
+}));
+const TEMA={Mayor:"las lecciones del destino"};
+SUITS.forEach(S=>TEMA[S.k]=S.t);
+
+const POS={1:["Mensaje"],3:["Pasado","Presente","Futuro"],5:["Origen","Presente","Futuro cercano","Consejo","Desenlace"]};
+const TH={
+amor:["el amor y las relaciones","abre tu corazón sin miedo, pero con los pies en la tierra. Lo que duele no siempre es amor: a veces es apego."],
+trabajo:["tu vida profesional","confía en tu talento y muéstralo. Cuida que tu valor no dependa solo de tu productividad."],
+dinero:["tu economía y prosperidad","actúa con inteligencia financiera sin miedo a invertir en ti. El dinero es una herramienta, no un fin."],
+salud:["tu bienestar","escucha las señales de tu cuerpo y prioriza el descanso. Ante cualquier síntoma, consulta a un profesional."],
+familia:["tus vínculos familiares","la comunicación honesta y el perdón sanan mucho. Poner límites también es amor."],
+destino:["tu propósito de vida","confía en el proceso: cada experiencia te acerca a tu misión. Tu intuición es tu mejor brújula."],
+decision:["la decisión que te inquieta","elige con el corazón y asume las consecuencias con valentía. La parálisis también es una elección."],
+general:["tu camino actual","todo está en movimiento: confía en el proceso y mantente abierto. No te aferres a lo que ya no fluye."]};
+
+// ---------- ESTADO ----------
+let cur=[],name="",topic="general",arc=null,iaCtl=null,iaAuto=false;
+
+// ---------- ESTRELLAS ----------
+(()=>{const f=document.createDocumentFragment();
+for(let i=0;i<70;i++){const s=document.createElement("div");s.className="star";const z=Math.random()*2.4+.8;
+s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s`;f.appendChild(s);}
+$("stars").appendChild(f);})();
+
+// ---------- ARCANO PERSONAL ----------
+function arcanoPersonal(f){
+  let s=f.replace(/\D/g,"").split("").reduce((a,b)=>a+ +b,0);
+  while(s>22)s=String(s).split("").reduce((a,b)=>a+ +b,0);
+  return s%22; // 22 → El Loco
+}
+const fechaTxt=f=>{const[y,m,d]=f.split("-");return `${+d} ${["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"][m-1]} ${y}`};
+
+// ---------- REPARTIR ----------
+function repartir(){
+  const n=$("nm").value.trim(),bd=$("bd").value;
+  if(!n){$("err").textContent="✨ Escribe el nombre de la persona.";return;}
+  if(!bd){$("err").textContent="✨ Ingresa la fecha de nacimiento.";return;}
+  $("err").textContent="";
+  name=n;topic=$("tp").value;iaAuto=false;if(iaCtl)iaCtl.abort();
+  const k=+$("sp").value;
+  const pool=[...DECK];
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  cur=pool.slice(0,k).map(c=>({...c,rev:Math.random()<.25,f:false}));
+
+  const a=MAJ[arcanoPersonal(bd)];arc=a;
+  $("who").innerHTML=`<strong>${a[1]} ${esc(n)} · ${fechaTxt(bd)}</strong><br>Tu arcano personal es <strong>${a[0]}</strong>: ${a[2].toLowerCase()}.`;
+  $("who").classList.add("on");
+  $("tools").classList.add("on");
+
+  $("cards").innerHTML=cur.map((c,i)=>`
+    <div class="card" data-i="${i}" tabindex="0" style="animation-delay:${i*.12}s">
+      <div class="inner">
+        <div class="face back">✦</div>
+        <div class="face front"><b>${c.sym}</b><i class="${c.rev?"rv":""}">${c.e}</i><em>${c.n}</em><small class="${c.rev?"rv":""}">${c.rev?"⟲ Invertida":"↑ Derecha"}</small></div>
+      </div>
+      <div class="pos">${POS[k][i]}</div>
+    </div>`).join("");
+  $("rc").innerHTML="";
+  $("read").classList.remove("on");
+  $("cards").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+// ---------- REVELAR ----------
+function revelar(i){
+  if(!cur[i]||cur[i].f)return;
+  cur[i].f=true;
+  document.querySelector(`.card[data-i="${i}"]`).classList.add("flip");
+  setTimeout(lectura,500);
+}
+const siguiente=()=>{const i=cur.findIndex(c=>!c.f);if(i>=0)revelar(i);};
+function todas(){cur.forEach((_,i)=>setTimeout(()=>revelar(i),i*450));}
+
+function lectura(){
+  if(iaAuto)return;
+  const k=cur.length,pos=POS[k],hechas=cur.map((c,i)=>({c,i})).filter(x=>x.c.f);
+  if(!hechas.length)return;
+  let h=hechas.map(({c,i})=>`<div class="it"><span>${pos[i]}</span><br><b>${c.e} ${c.n}${c.rev?" (invertida)":""}</b><br>${c.rev?c.r:c.u}.</div>`).join("");
+  if(hechas.length===k)h+=`<div class="syn">${sintesis()}</div>`;
+  $("rc").innerHTML=h;
+  $("read").classList.add("on");
+  if(hechas.length===k){iaAuto=true;document.querySelector(".syn").scrollIntoView({behavior:"smooth",block:"nearest"});lecturaIA();}
+}
+
+function sintesis(){
+  const k=cur.length,rv=cur.filter(c=>c.rev).length,my=cur.filter(c=>c.s==="Mayor").length;
+  const cnt={};cur.forEach(c=>cnt[c.s]=(cnt[c.s]||0)+1);
+  const dom=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0];
+  const T=TH[topic];
+  let s=`<p><strong>✨ Síntesis para ${esc(name)}</strong> sobre ${T[0]}.</p>`;
+  if(k>1){
+    s+=`<p><strong>🌀 Energía dominante:</strong> ${TEMA[dom]}${cnt[dom]>1?` (${cnt[dom]} cartas)`:""}. `;
+    s+=rv===0?"Todas las cartas salieron derechas: la energía fluye y el camino está despejado. "
+      :rv===k?"Todas las cartas salieron invertidas: hay resistencias internas que conviene mirar de frente. "
+      :`${rv} de ${k} cartas están invertidas: hay zonas bloqueadas, pero también mucha energía disponible. `;
+    if(my>=2)s+=`Con ${my} Arcanos Mayores, esto no es casual: hay una lección de vida en juego. `;
+    s+=`</p>`;
+    s+=`<p><strong>📜 El hilo:</strong> ${cur.map((c,i)=>`${POS[k][i].toLowerCase()} → ${c.n}${c.rev?" (inv.)":""}`).join(" · ")}.</p>`;
+  }
+  s+=`<p id="fb" style="display:none"><strong>💫 Consejo:</strong> ${T[1]}</p>`;
+  s+=`<button class="gold" id="ia" onclick="lecturaIA()">🤖 Lectura profunda con IA</button><div class="ai" id="iaout"></div>`;
+  return s;
+}
+
+// ---------- LECTURA PROFUNDA CON IA ----------
+async function lecturaIA(){
+  const out=$("iaout"),btn=$("ia");
+  let sample=null;
+  try{sample=window.claude?await window.claude.use("sample"):null;}catch(e){}
+  if(!sample){const fb=$("fb");if(fb)fb.style.display="block";out.textContent="La lectura con IA no está disponible en esta vista. Usa la síntesis de arriba.";return;}
+  const k=cur.length;
+  const cartas=cur.map((c,i)=>`${i+1}. ${POS[k][i]}: ${c.n}${c.rev?" (invertida)":" (derecha)"} — significado base: ${c.rev?c.r:c.u}`).join("\n");
+  const prompt=`Eres una tarotista cálida, intuitiva y profunda. Escribe en español una lectura personalizada, original y emotiva para ${name}.
+Tema consultado: ${TH[topic][0]}.
+Arcano personal (por fecha de nacimiento): ${arc?arc[0]:"desconocido"}.
+Tirada de ${k} carta(s):
+${cartas}
+
+Instrucciones: menciona cada carta por su nombre y su posición, y evita frases genéricas que valdrían para cualquier persona: esta lectura debe sentirse única para esta combinación exacta de cartas y para ${name}. Escribe 4 párrafos cortos (unas 250 a 320 palabras en total). 1) Lo que muestran las cartas en conjunto, enlazándolas como una historia. 2) La lección o emoción de fondo. 3) El mensaje del arcano personal aplicado al tema. 4) Un cierre con un consejo concreto y esperanzador. Tono poético pero cercano, háblale de tú, sin listas, sin títulos y sin markdown. Es una guía simbólica y de entretenimiento: no hagas predicciones absolutas ni afirmaciones médicas, legales o financieras, y no generes miedo. No copies textos de otras fuentes.`;
+  btn.disabled=true;btn.textContent="🔮 Consultando las estrellas…";
+  if(iaCtl)iaCtl.abort();
+  iaCtl=new AbortController();
+  out.textContent="";
+  try{
+    await sample(prompt,{signal:iaCtl.signal,cache:false,onText:({text})=>{out.textContent=text;}});
+    btn.textContent="🔄 Generar otra lectura";
+  }catch(e){
+    {const fb=$("fb");if(fb)fb.style.display="block";}
+    if(e&&e.code==="rate_limited")out.textContent="Demasiadas consultas seguidas, espera unos segundos e inténtalo de nuevo.";
+    else if(!out.textContent||out.textContent==="Thinking...")out.textContent="No se pudo generar la lectura con IA. Usa la síntesis de arriba.";
+    btn.textContent="🤖 Lectura profunda con IA";
+  }
+  btn.disabled=false;
+}
+
+// ---------- CONTROLES ----------
+function reiniciar(){
+  cur=[];name="";iaAuto=false;if(iaCtl)iaCtl.abort();
+  ["nm","bd"].forEach(i=>$(i).value="");
+  $("who").classList.remove("on");$("tools").classList.remove("on");$("read").classList.remove("on");
+  $("rc").innerHTML="";$("err").textContent="";
+  $("cards").innerHTML='<div class="hint">Las cartas esperan tu consulta… ✨</div>';
+  document.body.classList.remove("live");$("lv").textContent="📺 Modo live";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function modoLive(){
+  const on=document.body.classList.toggle("live");
+  $("lv").textContent=on?"↩️ Salir del modo live":"📺 Modo live";
+}
+
+$("go").onclick=repartir;
+$("rs").onclick=reiniciar;
+$("nx").onclick=siguiente;
+$("all").onclick=todas;
+$("lv").onclick=modoLive;
+$("cards").addEventListener("click",e=>{const c=e.target.closest(".card");if(c)revelar(+c.dataset.i);});
+$("cards").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){const c=e.target.closest(".card");if(c){e.preventDefault();revelar(+c.dataset.i);}}});
+$("nm").addEventListener("keydown",e=>{if(e.key==="Enter")repartir();});
+document.addEventListener("keydown",e=>{if(e.key===" "&&e.target===document.body&&cur.length){e.preventDefault();siguiente();}});
+</script>
+</body>
+</html>
